@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up | Bharatyatra.com</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+    .signup-container {
+      background: rgba(0,0,0,0.6);
+      border-radius: 24px;
+      width: 500px;
+      margin: 100px auto 0 auto;
+      padding: 45px 40px 30px 40px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+      text-align: center;
+      color: #fff;
+      position: relative;
+    }
+    .signup-container h2 {
+      margin-bottom: 28px;
+      font-size: 2.2rem;
+      color: #ffd700;
+    }
+    .signup-container input {
+      width: 92%;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 1.1rem;
+      outline: none;
+    }
+    .signup-container button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: #ffd700;
+      color: #222;
+      font-size: 1.15rem;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+    .signup-container .signin-link {
+      margin-top: 22px;
+      display: block;
+      color: #fff;
+      font-size: 1.08rem;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .signup-container .signin-link:hover {
+      color: #ffd700;
+    }
+    #menu_bar {
+      width: 100%;
+      background: rgba(0,0,0,0.5);
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+      height: 80px;
+    }
+    #title {
+      font-size: 50px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      text-align: center;
+      padding: 15px 40px;
+      margin-left: 40px;
+      display: inline-block;
+    }
+    .menu-list {
+      display: flex;
+      list-style: none;
+      margin-right: 40px;
+    }
+    .menu-list li {
+      margin-left: 25px;
+    }
+    .menu-list a {
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      font-family: Verdana;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .menu-list a:hover {
+      background: #ffd700;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <nav id="menu_bar">
+    <a href="index.html" style="text-decoration:none;">
+    <h3 id="title">Bharatyatra.com</h3>
+  </a>
+    <ul class="menu-list">
+  <li><a href="index.html">Home</a></li>
+  <li><a href="destination.html">Destination</a></li> 
+  <li><a href="about us.html">About us</a></li>
+  <li><a href="sign up.html">Sign Up</a></li>
+</ul>
+  </nav>
+
+  <div class="signup-container">
+    <h2>Sign Up</h2>
+    <form>
+      <input type="text" placeholder="Full Name" required>
+      <input type="email" placeholder="Email" required>
+      <input type="tel" placeholder="Mobile Number" pattern="[0-9]{10}" required>
+      <input type="password" placeholder="Password" required>
+      <button type="submit">Create Account</button>
+    </form>
+    <a class="signin-link" href="sign in.html">If you already sign up, click here to Sign In</a>
+  </div>
+</body>
+</html>

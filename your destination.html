@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Destination</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .destination-flex-card {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      width: 98vw;
+      max-width: 1400px;
+      min-height: 600px;
+      margin: 120px auto 0 auto;
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+      padding: 40px 30px;
+      gap: 48px;
+    }
+    .destination-flex-card .left {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .destination-flex-card .right {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .image-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+    .image-gallery img {
+      width: 220px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      background: #222;
+      transition: transform 0.3s;
+    }
+    .image-gallery img:hover {
+      transform: scale(1.07);
+      z-index: 2;
+    }
+    .destination-flex-card h1 {
+      font-size: 2.3rem;
+      margin-bottom: 16px;
+      color: #ffd700;
+      text-align: left;
+      width: 100%;
+    }
+    .destination-flex-card .wiki-info {
+      font-size: 1.18rem;
+      margin-bottom: 24px;
+      color: #ffd700;
+      background: rgba(0,0,0,0.7);
+      border-radius: 12px;
+      padding: 28px 28px;
+      min-height: 180px;
+      width: 100%;
+      box-sizing: border-box;
+      line-height: 1.7;
+      letter-spacing: 0.2px;
+    }
+    #video-gallery {
+      width:100%;
+      display:flex;
+      flex-wrap:wrap;
+      gap:20px;
+      justify-content:left;
+      margin-bottom:20px;
+    }
+    #video-gallery video {
+      border-radius:10px;
+      margin:10px;
+      width:320px;
+      height:200px;
+      background:#111;
+    }
+    @media (max-width: 1200px) {
+      .destination-flex-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 18px 2vw;
+      }
+      .destination-flex-card .right, .destination-flex-card .left {
+        width: 100%;
+        max-width: 100%;
+        align-items: center;
+      }
+      .image-gallery img {
+        width: 45vw;
+        height: 120px;
+      }
+    }
+    @media (max-width: 700px) {
+      .image-gallery img {
+        width: 90vw;
+        height: 100px;
+      }
+      .destination-flex-card {
+        padding: 8px 0;
+      }
+    }
+
+    #img-modal {
+  animation: fadeIn 0.3s;
+}
+@keyframes fadeIn {
+  from { opacity: 0;}
+  to { opacity: 1;}
+}
+
+  </style>
+</head>
+<body>
+  <nav id="menu_bar">
+    <a href="index.html" style="text-decoration:none;">
+      <h3 id="title">Bharatyatra.com</h3>
+    </a>
+    <table id="menu" align="right">
+      <tr>
+        <td id="nav-item"><a href="index.html">Home</a></td>
+        <td id="nav-item"><a href="destination.html">Destination</a></td>
+        <td id="nav-item"><a href="about us.html">About us</a></td>
+        <td id="nav-item"><a href="sign up.html">Sign Up</a></td>
+      </tr>
+    </table>
+  </nav>
+  <div class="destination-flex-card" id="destination-card">
+    <div class="left">
+      <div class="image-gallery" id="image-gallery">
+        <!-- Images will be loaded here -->
+      </div>
+    </div>
+    <div class="right">
+      <h1 id="place-name">Loading...</h1>
+      <div class="wiki-info" id="wiki-info">Loading information...</div>
+      <div id="video-gallery"></div>
+    </div>
+  </div>
+<div class="wiki-info" id="wiki-info">Loading information...</div>
+<div class="google-info" id="google-info"></div>
+  <script>
+    const pexelsApiKey = "qcymZkRN7rOWGOjrYIWm9UTuYlpqcPgfRr0csh511cq3f3vJLgqCXZGL";
+const selectedPlace = JSON.parse(localStorage.getItem('selectedPlace'));
+
+let imagePage = 1;
+let videoPage = 1;
+const perPage = 4;
+// Sets to track unique URLs and prevent duplicates
+const seenImageUrls = new Set();
+const seenVideoUrls = new Set();
+
+function getTouristQuery(place) {
+  // Only use the main place name (before comma)
+  let mainPlace = place.split(',')[0].trim();
+  return `${mainPlace}, India`;
+}
+// Wikipedia fuzzy info fetcher
+async function getWikiDataFuzzy(placeName) {
+  const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(placeName)}&format=json&origin=*`;
+  try {
+    const searchRes = await fetch(searchUrl);
+    const searchData = await searchRes.json();
+    if (searchData.query.search.length === 0) {
+      document.getElementById('wiki-info').innerText = 'No related information found.';
+      getGooglePlaceInfo(placeName); // <-- Yahan call karo
+      return;
+    }
+    const bestTitle = searchData.query.search[0].title;
+    const extractUrl = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&titles=${encodeURIComponent(bestTitle)}&exintro=1&explaintext=1&format=json&origin=*`;
+    const extractRes = await fetch(extractUrl);
+    const extractData = await extractRes.json();
+    const pageId = Object.keys(extractData.query.pages)[0];
+    const extract = extractData.query.pages[pageId].extract;
+    if (extract) {
+      document.getElementById('wiki-info').innerText = extract;
+    } else {
+      document.getElementById('wiki-info').innerText = 'No related information found.';
+      getGooglePlaceInfo(placeName); // <-- Yahan bhi call karo
+    }
+  } catch (error) {
+    document.getElementById('wiki-info').innerText = 'Could not load more information.';
+    getGooglePlaceInfo(placeName); // <-- Yahan bhi call karo
+  }
+}
+
+function fetchPexelsVideos(place, page = 1) {
+  const videoDiv = document.getElementById('video-gallery');
+  if (page === 1) videoDiv.innerHTML = "Loading videos...";
+  fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(getTouristQuery(place))}&per_page=${perPage}&page=${page}`, {
+    headers: {
+      Authorization: pexelsApiKey
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.videos && data.videos.length > 0) {
+        if (page === 1) {
+          videoDiv.innerHTML = "";
+          seenVideoUrls.clear();
+        }
+        const uniqueVideos = data.videos.filter(video => {
+          const file = video.video_files.find(f => f.quality === "hd") || video.video_files[0];
+          return file && !seenVideoUrls.has(file.link);
+        });
+
+        uniqueVideos.forEach(video => {
+          const file = video.video_files.find(f => f.quality === "hd") || video.video_files[0];
+          seenVideoUrls.add(file.link);
+          videoDiv.innerHTML += `
+            <div style="position:relative;display:inline-block;margin:6px;">
+              <video controls>
+                <source src="${file.link}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+              <a href="${file.link}" download style="position:absolute;bottom:8px;right:8px;background:#ffd700;color:#222;padding:6px 14px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:0.95rem;">Download</a>
+            </div>
+          `;
+        });
+        if (data.videos.length === perPage) {
+          let showMoreBtn = document.getElementById('show-more-videos-btn');
+          if (!showMoreBtn) {
+            showMoreBtn = document.createElement('button');
+            showMoreBtn.id = 'show-more-videos-btn';
+            showMoreBtn.textContent = 'Show More Videos';
+            showMoreBtn.style = "margin:18px 0;padding:10px 28px;font-size:1.1rem;background:#ffd700;color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;";
+            videoDiv.parentElement.appendChild(showMoreBtn);
+          }
+          showMoreBtn.onclick = function() {
+            videoPage++;
+            fetchPexelsVideos(place, videoPage);
+          };
+        } else {
+          const btn = document.getElementById('show-more-videos-btn');
+          if (btn) btn.remove();
+        }
+      } else {
+        videoDiv.innerHTML = "<span style='color:#ffd700;'>No tourist videos found for this place.</span>";
+        const btn = document.getElementById('show-more-videos-btn');
+        if (btn) btn.remove();
+      }
+    })
+    .catch(() => {
+      videoDiv.innerHTML = "<span style='color:red;'>Could not load videos.</span>";
+    });
+}
+
+// Lightbox modal for image preview
+function showImageModal(src, alt) {
+  let modal = document.getElementById('img-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'img-modal';
+    modal.style = `
+      position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;
+      background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;
+    `;
+    modal.innerHTML = `
+      <div style="position:relative;">
+        <img id="modal-img" src="${src}" alt="${alt}" style="max-width:90vw;max-height:80vh;border-radius:18px;box-shadow:0 2px 24px #000;">
+        <a id="img-download" href="${src}" download style="position:absolute;top:10px;right:60px;background:#ffd700;color:#222;padding:10px 18px;border-radius:8px;font-weight:bold;text-decoration:none;">Download</a>
+        <button id="close-modal" style="position:absolute;top:10px;right:10px;background:#222;color:#fff;padding:8px 14px;border-radius:8px;font-size:1.2rem;cursor:pointer;">X</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('close-modal').onclick = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      modal.remove();
+    };
+    document.getElementById('img-download').onclick = function(e) {
+      e.stopPropagation();
+    };
+  } else {
+    document.getElementById('modal-img').src = src;
+    document.getElementById('modal-img').alt = alt;
+    document.getElementById('img-download').href = src;
+    modal.style.display = 'flex';
+  }
+  modal.onclick = function(e) {
+    if (e.target === modal) modal.remove();
+  };
+}
+
+// Update fetchPexelsImages to add click and download
+function fetchPexelsImagesWithModal(place, page = 1) {
+  const gallery = document.getElementById('image-gallery');
+  if (page === 1) gallery.innerHTML = "Loading images...";
+  fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(getTouristQuery(place))}&per_page=${perPage}&page=${page}`, {
+    headers: {
+      Authorization: pexelsApiKey
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.photos && data.photos.length > 0) {
+        if (page === 1) {
+          gallery.innerHTML = "";
+          seenImageUrls.clear();
+        }
+        // Your suggested logic to filter for unique photos
+        const uniquePhotos = data.photos.filter(photo => !seenImageUrls.has(photo.src.large));
+
+        uniquePhotos.forEach(photo => {
+          // Add the URL to the set to track it
+          seenImageUrls.add(photo.src.large);
+
+          const imgDiv = document.createElement('div');
+          imgDiv.style = "position:relative;display:inline-block;margin:6px;";
+          const img = document.createElement('img');
+          img.src = photo.src.large;
+          img.alt = photo.alt || place;
+          img.style.cursor = "pointer";
+          img.onclick = () => showImageModal(img.src, img.alt);
+          // Download button
+          const dlBtn = document.createElement('a');
+          dlBtn.href = photo.src.original;
+          dlBtn.download = "";
+          dlBtn.textContent = "Download";
+          dlBtn.style = "position:absolute;bottom:8px;right:8px;background:#ffd700;color:#222;padding:6px 14px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:0.95rem;";
+          imgDiv.appendChild(img);
+          imgDiv.appendChild(dlBtn);
+          gallery.appendChild(imgDiv);
+        });
+        if (data.photos.length === perPage) {
+          let showMoreBtn = document.getElementById('show-more-images-btn');
+          if (!showMoreBtn) {
+            showMoreBtn = document.createElement('button');
+            showMoreBtn.id = 'show-more-images-btn';
+            showMoreBtn.textContent = 'Show More Images';
+            showMoreBtn.style = "margin:18px 0;padding:10px 28px;font-size:1.1rem;background:#ffd700;color:#222;border:none;border-radius:10px;cursor:pointer;font-weight:bold;";
+            gallery.parentElement.appendChild(showMoreBtn);
+          }
+          showMoreBtn.onclick = function() {
+            imagePage++;
+            fetchPexelsImagesWithModal(place, imagePage);
+          };
+        } else {
+          const btn = document.getElementById('show-more-images-btn');
+          if (btn) btn.remove();
+        }
+      } else {
+        gallery.innerHTML = "<span style='color:#ffd700;'>No tourist images found for this place.</span>";
+        const btn = document.getElementById('show-more-images-btn');
+        if (btn) btn.remove();
+      }
+    })
+    .catch(() => {
+      gallery.innerHTML = "<span style='color:red;'>Could not load images.</span>";
+    });
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  const selectedPlace = JSON.parse(localStorage.getItem('selectedPlace'));
+  if (selectedPlace) {
+    document.getElementById('place-name').textContent = selectedPlace.place;
+    // Wikipedia info
+    getWikiDataFuzzy(selectedPlace.place);
+    // Pexels images (first page)
+    fetchPexelsImagesWithModal(selectedPlace.place, 1);
+    // Pexels videos (first page)
+    fetchPexelsVideos(selectedPlace.place, 1);
+  } else {
+    document.getElementById('destination-card').innerHTML = "<h1>No Place Selected</h1><p>Please go back and select a place.</p>";
+  }
+});
+
+// Google Places API se place info fetcher
+async function getGooglePlaceInfo(placeName) {
+  const apiKey = "AIzaSyDWmF4o5KYfOigmU3QgdlxRs9FyNYQMKEs";
+  // Text Search endpoint
+  const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(placeName)}&key=${apiKey}`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.status === "OK" && data.results.length > 0) {
+      const place = data.results[0];
+      // Show info (address, rating, etc.)
+      document.getElementById('google-info').innerHTML = `
+        <b>Address:</b> ${place.formatted_address || "N/A"}<br>
+        <b>Rating:</b> ${place.rating || "N/A"}<br>
+        <b>User Ratings:</b> ${place.user_ratings_total || "N/A"}<br>
+        <b>Type:</b> ${place.types ? place.types.join(', ') : "N/A"}
+      `;
+    } else {
+      document.getElementById('google-info').innerText = 'No information found from Google Maps.';
+    }
+  } catch (error) {
+    document.getElementById('google-info').innerText = 'Could not load Google Maps information.';
+  }
+}
+
+
+</script>
+</body>
+</html>

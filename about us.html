@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Us | Bharatyatra.com</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-y: auto;
+    }
+    #menu_bar {
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 10px;
+      text-align: center;
+      z-index: 2;
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    #title {
+      font-size: 40px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      text-align: left;
+      padding-left: 30px;
+      margin: 0;
+    }
+    #menu {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 600px;
+      height: 70px;
+      float: right;
+      margin-top: 0;
+    }
+    #menu td#nav-item a {
+      font-size: 25px;
+      color: white;
+      text-decoration: none;
+      font-family: Verdana;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+    }
+    #menu td#nav-item a:hover {
+      background: #ffd700;
+      color: #222;
+    }
+    .about-container {
+      max-width: 700px;
+      margin: 120px auto 40px auto;
+      background: rgba(0,0,0,0.5);
+      padding: 28px 32px;
+      border-radius: 18px;
+      color: #fff;
+      text-align: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .about-container h2 {
+      color: #ffd700;
+      margin-bottom: 18px;
+      font-size: 2rem;
+    }
+    .about-container strong {
+      color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+  <nav id="menu_bar">
+    <a href="index.html" style="text-decoration:none;">
+      <h3 id="title">Bharatyatra.com</h3>
+    </a>
+    <table id="menu" align="right">
+      <tr>
+        <td id="nav-item"><a href="index.html">Home</a></td>
+        <td id="nav-item"><a href="destination.html">Destination</a></td>
+        <td id="nav-item"><a href="about us.html">About us</a></td>
+        <td id="nav-item"><a href="sign up.html">Sign Up</a></td>
+      </tr>
+    </table>
+  </nav>
+
+  <div class="about-container">
+    <h2>About Us</h2>
+    <p>
+      Bharatyatra.com is dedicated to helping you explore the beauty, culture, and heritage of India. From world-famous monuments to vibrant cities and serene nature, our platform brings you the best travel destinations and experiences. Start your journey with us and discover the incredible diversity of Bharat!
+      <br><br>
+      <strong>Developed by:</strong> Suraj Adhikary<br>
+      <strong>Email:</strong> surajadhikary880@gmail.com<br>
+      <strong>Contact No:</strong> 9348676697<br>
+      <strong>Address:</strong> Malkangiri, Odisha, 764051
+    </p>
+  </div>
+</body>
+</html>
