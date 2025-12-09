@@ -38,5 +38,8 @@ The website fetches real-time information using the **Wikipedia API** and displa
 
 ## 📸 Screenshots
 
-Place your images inside an **images** folder and update file names:
+Place your images:
+![Home Page]
+
+
 
