@@ -39,7 +39,9 @@ The website fetches real-time information using the **Wikipedia API** and displa
 ## 📸 Screenshots
 
 Place your images:
+
 <p align="center">
+  
 ### **1. 🏠 Home Page** 
 <img src="./home.png" width="700" align="center">
 
@@ -51,6 +53,7 @@ Place your images:
 
 ### **4. 📝 Signup Page**
 <img src="./signup.png" width="700" align="center">
+
 </p>
 
 
