@@ -39,17 +39,19 @@ The website fetches real-time information using the **Wikipedia API** and displa
 ## 📸 Screenshots
 
 Place your images:
+<p align="center">
 ### **1. 🏠 Home Page** 
 <img src="./home.png" width="700" align="center">
 
 ### **2. 📍 Popular Destinations Page**
-<img src="./popular-destinations.png" width="700" align="center">
+<img src="./popular destination.png" width="700" align="center">
 
 ### **3. 📘 About Page**
 <img src="./about.png" width="700" align="center" >
 
 ### **4. 📝 Signup Page**
 <img src="./signup.png" width="700" align="center">
+</p>
 
 
 
